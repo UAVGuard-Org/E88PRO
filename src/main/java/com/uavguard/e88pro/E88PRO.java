@@ -1,83 +1,28 @@
-package com.uavguard.e88pro;
+package com.uavguard.wrj12620;
 
-import com.uavguard.plugin.Action;
-import com.uavguard.plugin.Command;
-import com.uavguard.plugin.Plugin;
+import com.uavguard.sdk.Action;
+import com.uavguard.sdk.Command;
+import com.uavguard.sdk.Plugin;
+import com.uavguard.sdk.Video;
 
-public class E88PRO implements Plugin {
+public class WRJ12620 implements Plugin {
 
-    private final byte[] packet = {
-        (byte) 0x03,
-        (byte) 0x66,
-        (byte) 0x80,
-        (byte) 0x80,
-        (byte) 0x80,
-        (byte) 0x80,
-        (byte) 0x00,
-        (byte) 0x00,
-        (byte) 0x99,
-    };
-
-    public int getPort() {
-        return 7099;
-    }
+    private final WRJ12620_Command command = new WRJ12620_Command();
+    private final WRJ12620_Video video = new WRJ12620_Video();
 
     public String getName() {
-        return "e88pro";
+        return "wrj12620";
     }
 
-    public byte[] getPacket() {
-        return packet;
+    public String getVersion() {
+        return "1.0.0";
     }
 
-    public Command[] getCommands() {
-        return new Command[] {
-            new Command(
-                "Decolar",
-                new byte[] {
-                    (byte) 0x03,
-                    (byte) 0x66,
-                    (byte) 0x80,
-                    (byte) 0x80,
-                    (byte) 0x80,
-                    (byte) 0x80,
-                    (byte) 0x01,
-                    (byte) 0x01,
-                    (byte) 0x99,
-                }
-            ),
-            new Command(
-                "Pousar",
-                new byte[] {
-                    (byte) 0x03,
-                    (byte) 0x66,
-                    (byte) 0x80,
-                    (byte) 0x80,
-                    (byte) 0x80,
-                    (byte) 0x80,
-                    (byte) 0x02,
-                    (byte) 0x02,
-                    (byte) 0x99,
-                }
-            ),
-        };
+    public Command getCommand() {
+        return command;
     }
 
-    public void setParameter(Action action, int percent) {
-        byte value = (byte) (128 +
-            (percent / 100f) * (percent >= 0 ? 127 : 128));
-
-        switch (action) {
-            case ROLL -> packet[2] = value;
-            case PITCH -> packet[3] = value;
-            case THROTTLE -> packet[4] = value;
-            case YAW -> packet[5] = value;
-        }
-
-        int checksum = 0;
-        for (int i = 2; i <= 5; i++) {
-            checksum ^= packet[i];
-        }
-        packet[7] = (byte) checksum;
+    public Video getVideo() {
+        return video;
     }
 }

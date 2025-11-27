@@ -60,21 +60,21 @@ public class E88PRO_Command implements Command {
         };
     }
 
-    public void setParameter(Movement action, int percent) {
+    public void setParameter(Action action, int percent) {
         byte value = (byte) (128 +
             (percent / 100f) * (percent >= 0 ? 127 : 128));
 
         switch (action) {
-            case ROLL -> packet[1] = value;
-            case PITCH -> packet[2] = value;
-            case THROTTLE -> packet[3] = value;
-            case YAW -> packet[4] = value;
+            case ROLL -> packet[2] = value;
+            case PITCH -> packet[3] = value;
+            case THROTTLE -> packet[4] = value;
+            case YAW -> packet[5] = value;
         }
 
         int checksum = 0;
-        for (int i = 1; i <= 4; i++) {
+        for (int i = 2; i <= 5; i++) {
             checksum ^= packet[i];
         }
-        packet[6] = (byte) checksum;
+        packet[7] = (byte) checksum;
     }
 }
